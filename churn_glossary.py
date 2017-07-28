@@ -4,16 +4,31 @@
 #enter just an abbr to request a definition
 #enter abbr and definition to create entry
 
-'''
-Need to organize this and comment it!  Works tho..
-'''
-
 
 import sys, shelve
 
 
 
+def deleteCheck(command, entry):
+	'''
+	check if they want to delete something instead of add or look up.  this will be rarely used.
+	'''
+	if (command.lower() == 'del') or (command.lower() == 'delete'): # gotta use .lower() cuz DELETE looks like a boolean or something
+		with shelve.open('churn_gloss') as churn_dic:
+			try:
+				del churn_dic[entry]
+				print(entry + ' Deleted')
+			except KeyError:
+				print(entry + ' Not Found.')
+		
+		sys.exit()
+	return
+
+
 def yes_no(string):
+	'''
+	trying to use this more.  little yes/no prompt with quit check included.  returns 1 (True) if y or yes
+	'''
 	answer = input(string)
 	if (answer.lower() == 'yes') or (answer.lower() == 'y'):
 		return 1
@@ -25,11 +40,15 @@ def yes_no(string):
 
 definition = ''
 abbr = sys.argv[1].upper()
+
+#check if they want to delete something first
+deleteCheck(abbr, sys.argv[2])
+
+#if a def has been entered, create definition string
 if len(sys.argv) > 2:
 	definition = sys.argv[2]
 	for arg in sys.argv[3:]:
 		definition += (' ' + arg)
-
 
 with shelve.open('churn_gloss') as churn_dic:
 	try:
@@ -67,3 +86,8 @@ with shelve.open('churn_gloss') as churn_dic:
 				print('Nothing Saved!')
 				sys.exit()
 
+
+
+
+
+#churn_dic.close()
